@@ -64,8 +64,11 @@ class mod_cursosprogresso_mod_form extends moodleform_mod {
         $mform->addElement('header', 'cursosprogressofieldset', get_string('cursosprogressofieldset', 'mod_cursosprogresso'));
 
         // Adicionando o elemento de seleção de cursos como multiselect.
-        $mform->addElement('select', 'selectedcourses', get_string('selectedcourses', 'mod_cursosprogresso'), $this->get_course_options(), array('multiple' => 'multiple'));
+        $mform->addElement('select', 'selectedcourses', get_string('selectedcourses', 'mod_cursosprogresso'), $this->get_cursos_options(), array('multiple' => 'multiple'));
 
+        // Preencher o multiselect com os cursos selecionados, caso existam.
+        $mform->getElement('selectedcourses')->setSelected($this->get_cursos_selecionados());
+        
         // Add standard elements.
         $this->standard_coursemodule_elements();
 
@@ -73,8 +76,8 @@ class mod_cursosprogresso_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
-    // Função para obter as opções dos cursos.
-    private function get_course_options() {
+    // Função para obter os cursos para preencher as options do select.
+    private function get_cursos_options() {
         global $COURSE;
         
         $courseoptions = array();
@@ -87,6 +90,21 @@ class mod_cursosprogresso_mod_form extends moodleform_mod {
         }
 
         return $courseoptions;
+    }
+
+    // Função para obter os cursos selecionados do banco de dados.
+    private function get_cursos_selecionados() {
+        global $COURSE;
+        global $DB;
+
+        if (!$cursosprogressoid = $DB->get_field('cursosprogresso', 'id', ['course' => $COURSE->id])) {
+            return false;
+        }
+        
+        $selectedcourses = $DB->get_field('cursosprogresso_cursos', 'cursoscsv', ['cursosprogressoid' => $cursosprogressoid]);
+        $selectedcourses = explode(',', $selectedcourses);
+
+        return $selectedcourses;
     }
 
     protected function specific_definition($mform) {
