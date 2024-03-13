@@ -60,4 +60,6 @@ $PAGE->set_context($modulecontext);
 
 echo $OUTPUT->header();
 
+// echo montarListaCursos($cm);
+
 echo $OUTPUT->footer();

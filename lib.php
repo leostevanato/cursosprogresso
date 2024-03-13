@@ -149,21 +149,8 @@ function cursosprogresso_get_coursemodule_info($cm) {
         return false;
     }
     
-    $selectedcourses = $DB->get_field('cursosprogresso_cursos', 'cursoscsv', ['cursosprogressoid' => $cursosprogresso->id]);
-    $selectedcourses = explode(',', $selectedcourses);
+    $selectedcourses_html = montarListaCursos($cm);
 
-    $cursos = [];
-
-    foreach ($selectedcourses as $courseid) {
-        $cursos[] = get_course($courseid)->fullname;
-    }
-
-    if (empty($cursos)) {
-        $selectedcourses_html = '<p>Nenhum curso selecionado.</p>';
-    } else {
-        $selectedcourses_html = arrayToHtmlList($cursos);
-    }
-    
     $info = new cached_cm_info();
 
     $info->content = '<b>'. $cursosprogresso->name . '</b><br><p>'. $selectedcourses_html .'</p>';
@@ -193,4 +180,27 @@ function arrayToHtmlList($array, $ulClass = "", $liClass = "") {
     $html .= "</ul>";
 
     return $html;
+}
+
+function montarListaCursos($cm) {
+    global $DB;
+
+    if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['course' => $cm->course], 'id,name')) {
+        return false;
+    }
+    
+    $selectedcourses = $DB->get_field('cursosprogresso_cursos', 'cursoscsv', ['cursosprogressoid' => $cursosprogresso->id]);
+    $selectedcourses = explode(',', $selectedcourses);
+
+    $cursos = [];
+
+    foreach ($selectedcourses as $courseid) {
+        $cursos[] = get_course($courseid)->fullname;
+    }
+
+    if (empty($cursos)) {
+        return '<p>Nenhum curso selecionado.</p>';
+    } else {
+        return arrayToHtmlList($cursos);
+    }
 }
