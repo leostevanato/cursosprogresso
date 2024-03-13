@@ -149,7 +149,7 @@ function cursosprogresso_get_coursemodule_info($cm) {
         return false;
     }
     
-    $selectedcourses_html = montarListaCursos($cm);
+    $selectedcourses_html = montar_lista_cursos($cm);
 
     $info = new cached_cm_info();
 
@@ -158,7 +158,7 @@ function cursosprogresso_get_coursemodule_info($cm) {
     return $info;
 }
 
-function arrayToHtmlList($array, $ulClass = "", $liClass = "") {
+function array_para_html_list($array, $ulClass = "", $liClass = "") {
     if (!is_array($array)) {
         return $array;
     }
@@ -169,7 +169,7 @@ function arrayToHtmlList($array, $ulClass = "", $liClass = "") {
         $html .= "<li class=\"$liClass\">";
 
         if (is_array($item)) {
-            $html .= arrayToHtmlList($item, $ulClass, $liClass);
+            $html .= array_para_html_list($item, $ulClass, $liClass);
         } else {
             $html .= $item;
         }
@@ -182,7 +182,7 @@ function arrayToHtmlList($array, $ulClass = "", $liClass = "") {
     return $html;
 }
 
-function montarListaCursos($cm) {
+function montar_lista_cursos($cm) {
     global $DB;
 
     if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['course' => $cm->course], 'id,name')) {
@@ -201,6 +201,6 @@ function montarListaCursos($cm) {
     if (empty($cursos)) {
         return '<p>Nenhum curso selecionado.</p>';
     } else {
-        return arrayToHtmlList($cursos);
+        return array_para_html_list($cursos, "mt-2");
     }
 }
