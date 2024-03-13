@@ -30,14 +30,11 @@
  */
 function cursosprogresso_supports($feature) {
     switch ($feature) {
-        case FEATURE_MOD_ARCHETYPE:
-            return MOD_ARCHETYPE_RESOURCE;
-        case FEATURE_MOD_INTRO:
-            return true;
-        case FEATURE_MOD_PURPOSE:
-            return MOD_PURPOSE_CONTENT;
-        default:
-            return null;
+        case FEATURE_MOD_ARCHETYPE: return MOD_ARCHETYPE_RESOURCE;
+        case FEATURE_MOD_INTRO:     return true;
+        case FEATURE_MOD_PURPOSE:   return MOD_PURPOSE_CONTENT;
+        case FEATURE_NO_VIEW_LINK:  return true;
+        default: return null;
     }
 }
 
@@ -124,4 +121,76 @@ function cursosprogresso_delete_instance($id) {
     }
 
     return true;
+}
+
+/**
+ * Sets the special label display on course page.
+ *
+ * @param cm_info $cm Course-module object
+ */
+function cursosprogresso_cm_info_view(cm_info $cm) {
+    $cm->set_custom_cmlist_item(true);
+}
+
+/**
+ * Given a course_module object, this function returns any
+ * "extra" information that may be needed when printing
+ * this activity in a course listing.
+ * See get_array_of_activities() in course/lib.php
+ *
+ * @global object
+ * @param object $coursemodule
+ * @return cached_cm_info|null
+ */
+function cursosprogresso_get_coursemodule_info($cm) {
+    global $DB;
+
+    if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['course' => $cm->course], 'id,name')) {
+        return false;
+    }
+    
+    $selectedcourses = $DB->get_field('cursosprogresso_cursos', 'cursoscsv', ['cursosprogressoid' => $cursosprogresso->id]);
+    $selectedcourses = explode(',', $selectedcourses);
+
+    $cursos = [];
+
+    foreach ($selectedcourses as $courseid) {
+        $cursos[] = get_course($courseid)->fullname;
+    }
+
+    if (empty($cursos)) {
+        $selectedcourses_html = '<p>Nenhum curso selecionado.</p>';
+    } else {
+        $selectedcourses_html = arrayToHtmlList($cursos);
+    }
+    
+    $info = new cached_cm_info();
+
+    $info->content = '<b>'. $cursosprogresso->name . '</b><br><p>'. $selectedcourses_html .'</p>';
+
+    return $info;
+}
+
+function arrayToHtmlList($array, $ulClass = "", $liClass = "") {
+    if (!is_array($array)) {
+        return $array;
+    }
+
+    $html = "<ul class=\"$ulClass\">";
+    
+    foreach ($array as $item) {
+        $html .= "<li class=\"$liClass\">";
+
+        if (is_array($item)) {
+            $html .= arrayToHtmlList($item, $ulClass, $liClass);
+        } else {
+            $html .= $item;
+        }
+
+        $html .= "</li>";
+    }
+
+    $html .= "</ul>";
+
+    return $html;
 }
