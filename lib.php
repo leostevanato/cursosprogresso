@@ -153,7 +153,7 @@ function cursosprogresso_get_coursemodule_info($cm) {
 
     $info = new cached_cm_info();
 
-    $info->content = '<b>'. $cursosprogresso->name . '</b><br><p>'. $selectedcourses_html .'</p>';
+    $info->content = '<b>'. $cursosprogresso->name . '</b><br>'. $selectedcourses_html;
 
     return $info;
 }
@@ -168,10 +168,10 @@ function array_para_html_list($array, $ulClass = "", $liClass = "") {
     foreach ($array as $item) {
         $html .= "<li class=\"$liClass\">";
 
-        if (is_array($item)) {
+        if (is_array($item[0])) {
             $html .= array_para_html_list($item, $ulClass, $liClass);
         } else {
-            $html .= $item;
+            $html .= '(' . $item['courseid'] . ') ' . $item['fullname'] . icone_curso_completado(aluno_concluiu_curso($item['courseid']));
         }
 
         $html .= "</li>";
@@ -180,6 +180,13 @@ function array_para_html_list($array, $ulClass = "", $liClass = "") {
     $html .= "</ul>";
 
     return $html;
+}
+
+function icone_curso_completado($completado = false) {
+    return ($completado) ?
+        '<i class="fa-solid fa-circle-check ml-2" style="color: #579368;"></i>'
+        :
+        '<i class="fa-solid fa-circle-xmark ml-2" style="color: #fb1818;"></i>';
 }
 
 function montar_lista_cursos($cm) {
@@ -195,7 +202,7 @@ function montar_lista_cursos($cm) {
     $cursos = [];
 
     foreach ($selectedcourses as $courseid) {
-        $cursos[] = get_course($courseid)->fullname;
+        $cursos[] = ['courseid' => $courseid, 'fullname' => get_course($courseid)->fullname];
     }
 
     if (empty($cursos)) {
@@ -203,4 +210,18 @@ function montar_lista_cursos($cm) {
     } else {
         return array_para_html_list($cursos, "mt-2");
     }
+}
+
+// Função para verificar se o aluno concluiu um curso
+function aluno_concluiu_curso($id_curso, $id_usuario = null) {
+    global $DB;
+    global $USER;
+
+    $id_usuario = $id_usuario ?? $USER->id;
+
+    // Obter o registro de conclusão do curso
+    $registro_conclusao = $DB->get_record('course_completions', array('course' => $id_curso, 'userid' => $id_usuario));
+
+    // Se o registro de conclusão existir, o aluno concluiu o curso
+    return !empty($registro_conclusao);
 }
