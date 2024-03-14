@@ -28,7 +28,4 @@ $plugin->component = 'mod_cursosprogresso';
 $plugin->release = '0.1.0';
 $plugin->version = 2024031300;
 $plugin->requires = 2018120300;
-$plugin->dependencies = [
-    'mod_choice' => 2018120300,
-];
 $plugin->maturity = MATURITY_BETA;
