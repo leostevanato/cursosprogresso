@@ -168,11 +168,7 @@ function array_para_html_list($array, $ulClass = "", $liClass = "") {
     foreach ($array as $item) {
         $html .= "<li class=\"$liClass\">";
 
-        if (is_array($item[0])) {
-            $html .= array_para_html_list($item, $ulClass, $liClass);
-        } else {
-            $html .= '(' . $item['courseid'] . ') ' . $item['fullname'] . icone_curso_completado(aluno_concluiu_curso($item['courseid']));
-        }
+        $html .= '(' . $item['courseid'] . ') ' . $item['fullname'] . icone_curso_completado(aluno_concluiu_curso($item['courseid']));
 
         $html .= "</li>";
     }
