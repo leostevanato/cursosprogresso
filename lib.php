@@ -144,12 +144,15 @@ function cursosprogresso_cm_info_view(cm_info $cm) {
  */
 function cursosprogresso_get_coursemodule_info($cm) {
     global $DB;
+    global $PAGE;
 
     if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['course' => $cm->course], 'id,name')) {
         return false;
     }
     
-    $selectedcourses_html = montar_lista_cursos($cm);
+    $renderer = $PAGE->get_renderer('mod_cursosprogresso');
+    $listacursos = new \mod_cursosprogresso\output\lista_cursos($cm);
+    $selectedcourses_html = $renderer->render($listacursos);
 
     $info = new cached_cm_info();
 
@@ -158,66 +161,5 @@ function cursosprogresso_get_coursemodule_info($cm) {
     return $info;
 }
 
-function array_para_html_list($array, $ulClass = "", $liClass = "") {
-    if (!is_array($array)) {
-        return $array;
-    }
-
-    $html = "<ul class=\"$ulClass\">";
-    
-    foreach ($array as $item) {
-        $html .= "<li class=\"$liClass\">";
-
-        $html .= '(' . $item['courseid'] . ') ' . $item['fullname'] . icone_curso_completado(aluno_concluiu_curso($item['courseid']));
-
-        $html .= "</li>";
-    }
-
-    $html .= "</ul>";
-
-    return $html;
 }
-
-function icone_curso_completado($completado = false) {
-    return ($completado) ?
-        '<i class="fa-solid fa-circle-check ml-2" style="color: #579368;"></i>'
-        :
-        '<i class="fa-solid fa-circle-xmark ml-2" style="color: #fb1818;"></i>';
-}
-
-function montar_lista_cursos($cm) {
-    global $DB;
-
-    if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['course' => $cm->course], 'id,name')) {
-        return false;
-    }
-    
-    $selectedcourses = $DB->get_field('cursosprogresso_cursos', 'cursoscsv', ['cursosprogressoid' => $cursosprogresso->id]);
-    $selectedcourses = explode(',', $selectedcourses);
-
-    $cursos = [];
-
-    foreach ($selectedcourses as $courseid) {
-        $cursos[] = ['courseid' => $courseid, 'fullname' => get_course($courseid)->fullname];
-    }
-
-    if (empty($cursos)) {
-        return '<p>Nenhum curso selecionado.</p>';
-    } else {
-        return array_para_html_list($cursos, "mt-2");
-    }
-}
-
-// Função para verificar se o aluno concluiu um curso
-function aluno_concluiu_curso($id_curso, $id_usuario = null) {
-    global $DB;
-    global $USER;
-
-    $id_usuario = $id_usuario ?? $USER->id;
-
-    // Obter o registro de conclusão do curso
-    $registro_conclusao = $DB->get_record('course_completions', array('course' => $id_curso, 'userid' => $id_usuario));
-
-    // Se o registro de conclusão existir, o aluno concluiu o curso
-    return !empty($registro_conclusao);
-}
+*/
