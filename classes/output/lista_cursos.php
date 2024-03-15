@@ -29,9 +29,10 @@ use renderer_base;
 use renderable;
 
 class lista_cursos implements templatable, renderable {
-
     /** @var The course module. */
     protected $cm;
+    /** @var array Cursos selecionados. */
+    protected $cursos_selecionados = [];
 
     /**
      * Constructor for this class.
@@ -68,7 +69,29 @@ class lista_cursos implements templatable, renderable {
                 'completed' => !empty($DB->get_record('course_completions', array('course' => $courseid, 'userid' => $USER->id)))
             ];
         }
-        
+
+        $this->cursos_selecionados = $data;
+
         return $data;
+    }
+
+    public function get_cursos_selecionados() {
+        return $this->cursos_selecionados;
+    }
+
+    public function get_cursos_completados_porcentagem() {
+        if (empty($this->cursos_selecionados) || count($this->cursos_selecionados['cursos']) == 0) {
+            return 0;
+        }
+
+        $conta_completos = array_reduce($this->cursos_selecionados['cursos'], fn($carry, $item) => $carry + ($item['completed'] ? 1 : 0), 0);
+
+        $conta_completos_pct = 0;
+
+        if ($conta_completos > 0) {
+            $conta_completos_pct = ($conta_completos / count($this->cursos_selecionados['cursos'])) * 100;
+        }
+
+        return $conta_completos_pct;
     }
 }
