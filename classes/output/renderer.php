@@ -27,7 +27,6 @@ namespace mod_cursosprogresso\output;
 use plugin_renderer_base;
 
 class renderer extends plugin_renderer_base {
-
     /**
      * Renderers a lista de cursos.
      *
@@ -36,7 +35,17 @@ class renderer extends plugin_renderer_base {
      */
     public function render_lista_cursos(lista_cursos $listacursos): string {
         $data = $listacursos->export_for_template($this);
-        // return $this->render_from_template('mod_cursosprogresso/lista_cursos', $data);
         return parent::render_from_template('mod_cursosprogresso/lista_cursos', $data);
+    }
+
+    /**
+     * Renderers a barra de progresso de conclusão dos cursos.
+     *
+     * @param barra_progresso $barraprogresso Objeto da barra de progresso.
+     * @return string The rendered html.
+     */
+    public function render_barra_progresso(barra_progresso $barraprogresso): string {
+        $data = $barraprogresso->export_for_template($this);
+        return parent::render_from_template('mod_cursosprogresso/barra_progresso', $data);
     }
 }
