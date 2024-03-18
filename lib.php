@@ -38,6 +38,11 @@ function cursosprogresso_supports($feature) {
     }
 }
 
+// Adicionando o ícone do plugin
+function mod_cursosprogresso_get_icon($size = null) {
+    return new pix_icon('icon', '', 'mod_cursosprogresso');
+}
+
 /**
  * Saves a new instance of the mod_cursosprogresso into the database.
  *
@@ -130,9 +135,9 @@ function cursosprogresso_delete_instance($id) {
  *
  * @param cm_info $cm Course-module object
  */
-function cursosprogresso_cm_info_view(cm_info $cm) {
-    $cm->set_custom_cmlist_item(true);
-}
+// function cursosprogresso_cm_info_view(cm_info $cm) {
+//     $cm->set_custom_cmlist_item(true);
+// }
 
 /**
  * Given a course_module object, this function returns any
