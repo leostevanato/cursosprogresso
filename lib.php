@@ -170,7 +170,7 @@ function cursosprogresso_get_coursemodule_info($cm) {
 
     $info = new cached_cm_info();
 
-    $info->content = '<span class="text-start text-left"><b>'. $cursosprogresso->name . '</b><br>'. $selectedcourses_html .'<br>'. $barraprogresso_html;
+    $info->content = '<span class="text-start text-left"><b>'. $cursosprogresso->name . '</b></span><br>'. $selectedcourses_html .'<br>'. $barraprogresso_html;
 
     return $info;
 }
