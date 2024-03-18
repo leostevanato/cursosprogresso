@@ -84,7 +84,7 @@ class lista_cursos implements templatable, renderable {
             return 0;
         }
 
-        $conta_completos = array_reduce($this->cursos_selecionados['cursos'], fn($carry, $item) => $carry + ($item['completed'] ? 1 : 0), 0);
+        $conta_completos = array_reduce($this->cursos_selecionados['cursos'], function($carry, $item) { return $carry + ($item['completed'] ? 1 : 0); }, 0);
 
         $conta_completos_pct = 0;
 
