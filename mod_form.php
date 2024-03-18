@@ -68,6 +68,11 @@ class mod_cursosprogresso_mod_form extends moodleform_mod {
 
         // Preencher o multiselect com os cursos selecionados, caso existam.
         $mform->getElement('selectedcourses')->setSelected($this->get_cursos_selecionados());
+
+        // Adicionando o elemento indicando se é pra usar a barra de progresso.
+        $mform->addElement('selectyesno', 'showprogressbar', get_string('showprogressbar', 'mod_cursosprogresso'));
+        // Se o campo showprogressbar não estiver setado no banco, 
+        $mform->getElement('showprogressbar')->setSelected($this->get_mostrar_barra_progresso());
         
         // Add standard elements.
         $this->standard_coursemodule_elements();
@@ -105,6 +110,19 @@ class mod_cursosprogresso_mod_form extends moodleform_mod {
         $selectedcourses = explode(',', $selectedcourses);
 
         return $selectedcourses;
+    }
+
+    // Função para obter a opção show progress bar do banco de dados.
+    private function get_mostrar_barra_progresso() {
+        global $COURSE;
+        global $DB;
+        
+        // Aqui retornamos true pois o valor padrão do campo select é SIM, então não podemos retornar false.
+        if (!$cursosprogressoid = $DB->get_field('cursosprogresso', 'id', ['course' => $COURSE->id])) {
+            return true;
+        }
+
+        return $DB->get_field('cursosprogresso_cursos', 'showprogressbar', ['cursosprogressoid' => $cursosprogressoid]);
     }
 
     protected function specific_definition($mform) {

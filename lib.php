@@ -59,6 +59,7 @@ function cursosprogresso_add_instance($moduleinstance, $mform = null) {
     $cursos = new stdClass();
     $cursos->cursosprogressoid = $id;
     $cursos->cursoscsv = implode(',', $moduleinstance->selectedcourses);
+    $cursos->showprogressbar = 1;
     $cursos->timemodified = time();
 
     $DB->insert_record('cursosprogresso_cursos', $cursos);
@@ -85,6 +86,7 @@ function cursosprogresso_update_instance($moduleinstance, $mform = null) {
     $cursos = new stdClass();
     $cursos->cursosprogressoid = $moduleinstance->id;
     $cursos->cursoscsv = implode(',', $moduleinstance->selectedcourses);
+    $cursos->showprogressbar = $moduleinstance->showprogressbar;
     $cursos->timemodified = time();
     
     $cursosprogresso_cursos = $DB->get_record('cursosprogresso_cursos', array('cursosprogressoid' => $moduleinstance->id));
@@ -154,12 +156,16 @@ function cursosprogresso_get_coursemodule_info($cm) {
     $listacursos = new \mod_cursosprogresso\output\lista_cursos($cm);
     $selectedcourses_html = $renderer->render($listacursos);
 
+    $barraprogresso_html = "";
+
+    if ($DB->get_field('cursosprogresso_cursos', 'showprogressbar', ['cursosprogressoid' => $cursosprogresso->id])) {
+        $barraprogresso = new \mod_cursosprogresso\output\barra_progresso('bp_cursos_completados', $listacursos->get_cursos_completados_porcentagem());
+        $barraprogresso_html = $renderer->render($barraprogresso);
+    }
+
     $info = new cached_cm_info();
 
-    $info->content = '<b>'. $cursosprogresso->name . '</b><br>'. $selectedcourses_html;
+    $info->content = '<b>'. $cursosprogresso->name . '</b><br>'. $selectedcourses_html .'<br>'. $barraprogresso_html;
 
     return $info;
 }
-
-}
-*/

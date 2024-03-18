@@ -49,6 +49,7 @@ function xmldb_cursosprogresso_upgrade($oldversion)
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('cursosprogressoid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('cursoscsv', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('showprogressbar', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1');
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
 
         // Adding keys to table cursosprogresso_cursos.
@@ -63,7 +64,6 @@ function xmldb_cursosprogresso_upgrade($oldversion)
         // Cursosprogresso savepoint reached.
         upgrade_mod_savepoint(true, 2024030813, 'cursosprogresso');
     }
-
 
     return true;
 }

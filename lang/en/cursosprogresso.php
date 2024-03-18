@@ -34,3 +34,4 @@ $string['pluginadministration'] = 'Cursos Progresso administração';
 
 $string['cursosprogressofieldset'] = 'Opções de Cursos Progresso';
 $string['selectedcourses'] = 'Cursos selecionados';
+$string['showprogressbar'] = 'Exibir barra de progresso';
