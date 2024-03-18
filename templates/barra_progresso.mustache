@@ -44,7 +44,20 @@
             <div id="{{html_id}}_status" class="text-truncate">&nbsp;</div>
         </div>
         <div class="text-right pl-3" style="flex: 0 0 content">
-            <span id="{{html_id}}_percentage" class="d-inline-block" style="width: 3em">{{percentage}}%</span>
+            <span id="{{html_id}}_percentage" class="d-inline-block" style="width: 4em"></span>
         </div>
     </div>
 </div>
+<script>
+var pb_pct = document.getElementById("{{html_id}}_percentage");
+var pct = parseFloat({{percentage}});
+
+if (pct < 100) {
+    pct = pct.toFixed(1);
+    let pct_arr = pct.split(".");
+
+    pct = pct_arr[1] > 0 ? pct : pct_arr[0];
+}
+
+pb_pct.textContent = pct + "%";
+</script>
