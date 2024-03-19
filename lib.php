@@ -174,3 +174,8 @@ function cursosprogresso_get_coursemodule_info($cm) {
 
     return $info;
 }
+
+// Função para descobrir onde a função informada foi definida.
+function arquivo_funcao_definida($nome_funcao) {
+    return "A função <b>". $nome_funcao ."</b> foi definida no arquivo " . (new ReflectionFunction("get_courses"))->getFileName();
+}
