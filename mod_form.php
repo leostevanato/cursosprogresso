@@ -64,7 +64,7 @@ class mod_cursosprogresso_mod_form extends moodleform_mod {
         $mform->addElement('header', 'cursosprogressofieldset', get_string('cursosprogressofieldset', 'mod_cursosprogresso'));
 
         // Adicionando o elemento de seleção de cursos como multiselect.
-        $mform->addElement('select', 'selectedcourses', get_string('selectedcourses', 'mod_cursosprogresso'), $this->get_cursos_options(), array('multiple' => 'multiple'));
+        $mform->addElement('autocomplete', 'selectedcourses', get_string('selectedcourses', 'mod_cursosprogresso'), $this->get_cursos_options(), array('multiple' => 'multiple'));
 
         // Preencher o multiselect com os cursos selecionados, caso existam.
         $mform->getElement('selectedcourses')->setSelected($this->get_cursos_selecionados());
@@ -86,7 +86,7 @@ class mod_cursosprogresso_mod_form extends moodleform_mod {
         global $COURSE;
         
         $courseoptions = array();
-        $courses = get_courses(); // Obtendo todos os cursos.
+        $courses = get_courses(['sort' => 'fullname']); // Obtendo todos os cursos.
 
         foreach ($courses as $course) {
             if ($COURSE->id != $course->id && $course->format != "site") {
