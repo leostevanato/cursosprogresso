@@ -22,8 +22,10 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core_course;
 namespace mod_cursosprogresso\output;
 
+use completion_completion;
 use templatable;
 use renderer_base;
 use renderable;
@@ -63,10 +65,12 @@ class lista_cursos implements templatable, renderable {
         $selectedcourses = explode(',', $selectedcourses);
         
         foreach ($selectedcourses as $courseid) {
+            $completion = new completion_completion(['course' => $courseid, 'userid' => $USER->id]);
+
             $data['cursos'][] = [
                 'courseid' => $courseid,
                 'fullname' => get_course($courseid)->fullname,
-                'completed' => !empty($DB->get_record('course_completions', array('course' => $courseid, 'userid' => $USER->id)))
+                'completed' => $completion->is_complete()
             ];
         }
 
