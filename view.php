@@ -41,17 +41,10 @@ if ($id) {
     $cm = get_coursemodule_from_instance('cursosprogresso', $moduleinstance->id, $course->id, false, MUST_EXIST);
 }
 
+$PAGE->set_url('/mod/cursosprogresso/view.php', array('id' => $cm->id));
+
 require_login($course, true, $cm);
 
-$modulecontext = context_module::instance($cm->id);
-
-$PAGE->set_url('/mod/cursosprogresso/view.php', array('id' => $cm->id));
-$PAGE->set_title(format_string($moduleinstance->name));
-$PAGE->set_heading(format_string($course->fullname));
-$PAGE->set_context($modulecontext);
-
-echo $OUTPUT->header();
-
-// echo montar_lista_cursos($cm);
-
-echo $OUTPUT->footer();
+$url = course_get_url($course);
+$url->set_anchor('module-' . $id);
+redirect($url);

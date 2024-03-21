@@ -22,65 +22,11 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require(__DIR__.'/../../config.php');
-
-require_once(__DIR__.'/lib.php');
-
-$id = required_param('id', PARAM_INT);
-
-$course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
-require_course_login($course);
-
-$coursecontext = context_course::instance($course->id);
-
-$PAGE->set_url('/mod/cursosprogresso/index.php', array('id' => $id));
-$PAGE->set_title(format_string($course->fullname));
-$PAGE->set_heading(format_string($course->fullname));
-$PAGE->set_context($coursecontext);
-
-echo $OUTPUT->header();
-
-$modulenameplural = get_string('modulenameplural', 'mod_cursosprogresso');
-echo $OUTPUT->heading($modulenameplural);
-
-$cursosprogressos = get_all_instances_in_course('cursosprogresso', $course);
-
-if (empty($cursosprogressos)) {
-    notice(get_string('no$cursosprogressoinstances', 'mod_cursosprogresso'), new moodle_url('/course/view.php', array('id' => $course->id)));
-}
-
-$table = new html_table();
-$table->attributes['class'] = 'generaltable mod_index';
-
-if ($course->format == 'weeks') {
-    $table->head  = array(get_string('week'), get_string('name'));
-    $table->align = array('center', 'left');
-} else if ($course->format == 'topics') {
-    $table->head  = array(get_string('topic'), get_string('name'));
-    $table->align = array('center', 'left', 'left', 'left');
-} else {
-    $table->head  = array(get_string('name'));
-    $table->align = array('left', 'left', 'left');
-}
-
-foreach ($cursosprogressos as $cursosprogresso) {
-    if (!$cursosprogresso->visible) {
-        $link = html_writer::link(
-            new moodle_url('/mod/cursosprogresso/view.php', array('id' => $cursosprogresso->coursemodule)),
-            format_string($cursosprogresso->name, true),
-            array('class' => 'dimmed'));
-    } else {
-        $link = html_writer::link(
-            new moodle_url('/mod/cursosprogresso/view.php', array('id' => $cursosprogresso->coursemodule)),
-            format_string($cursosprogresso->name, true));
-    }
-
-    if ($course->format == 'weeks' || $course->format == 'topics') {
-        $table->data[] = array($cursosprogresso->section, $link);
-    } else {
-        $table->data[] = array($link);
-    }
-}
-
-echo html_writer::table($table);
-echo $OUTPUT->footer();
+ require_once("../../config.php");
+ require_once("lib.php");
+ 
+ $id = required_param('id', PARAM_INT);   // course
+ 
+ $PAGE->set_url('/mod/cursosprogresso/index.php', array('id' => $id));
+ 
+ redirect("$CFG->wwwroot/course/view.php?id=$id");
