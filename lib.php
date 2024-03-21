@@ -131,25 +131,12 @@ function cursosprogresso_delete_instance($id) {
 }
 
 /**
- * Sets the special label display on course page.
+ * Exibe o conteúdo HTML direto na página do curso sem precisar abrir um link.
+ * https://moodledev.io/docs/apis/plugintypes/mod/visibility
  *
  * @param cm_info $cm Course-module object
  */
-// function cursosprogresso_cm_info_view(cm_info $cm) {
-//     $cm->set_custom_cmlist_item(true);
-// }
-
-/**
- * Given a course_module object, this function returns any
- * "extra" information that may be needed when printing
- * this activity in a course listing.
- * See get_array_of_activities() in course/lib.php
- *
- * @global object
- * @param object $coursemodule
- * @return cached_cm_info|null
- */
-function cursosprogresso_get_coursemodule_info($cm) {
+function cursosprogresso_cm_info_view(cm_info $cm) {
     global $DB;
     global $PAGE;
 
@@ -168,14 +155,51 @@ function cursosprogresso_get_coursemodule_info($cm) {
         $barraprogresso_html = $renderer->render($barraprogresso);
     }
 
-    $info = new cached_cm_info();
+    $conteudo_html = '<div class="text-start text-left font-weight-bold fw-bold">'. $cursosprogresso->name . '</div>'. $selectedcourses_html .'<br>'. $barraprogresso_html;
+    
+    $cm->set_content($conteudo_html);
+}
 
-    $info->content = '<div class="text-start text-left font-weight-bold fw-bold">'. $cursosprogresso->name . '</div>'. $selectedcourses_html .'<br>'. $barraprogresso_html;
+/**
+ * Given a course_module object, this function returns any
+ * "extra" information that may be needed when printing
+ * this activity in a course listing.
+ * See get_array_of_activities() in course/lib.php
+ *
+ * @global object
+ * @param object $coursemodule
+ * @return cached_cm_info|null
+ */
+function cursosprogresso_get_coursemodule_info($cm) {
+    global $DB;
 
-    return $info;
+    if ($cursosprogresso = $DB->get_record('cursosprogresso', array('id' => $cm->instance), 'id, name, intro, introformat')) {
+        $info = new cached_cm_info();
+        // no filtering hre because this info is cached and filtered later
+        $info->content = format_module_intro('cursosprogresso', $cursosprogresso, $cm->id, false);
+        $info->name  = $cursosprogresso->name;
+
+        return $info;
+    } else {
+        return null;
+    }
 }
 
 // Função para descobrir onde a função informada foi definida.
 function arquivo_funcao_definida($nome_funcao) {
     return "A função <b>". $nome_funcao ."</b> foi definida no arquivo " . (new ReflectionFunction("get_courses"))->getFileName();
+}
+
+/**
+ * This function is used by the reset_course_userdata function in moodlelib.
+ *
+ * @param object $data the data submitted from the reset course.
+ * @return array status array
+ */
+function cursosprogresso_reset_userdata($data) {
+
+    // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
+    // See MDL-9367.
+
+    return array();
 }
