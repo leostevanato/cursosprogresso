@@ -49,10 +49,17 @@ class barra_progresso implements renderable, templatable {
    * @return array
    */
   public function export_for_template(renderer_base $output) {
-      return [
-          'html_id' => $this->html_id,
-          'width' => $this->width,
-          'percentage' => $this->percentage,
-      ];
+    global $PAGE;
+
+    $PAGE->requires->js_call_amd('mod_cursosprogresso/barradeprogresso', 'init', [[
+        'barraprogressodivid' => 'barra-de-progresso-1',
+        'barraprogressopct' => '70.5'
+    ]]);
+
+    return [
+        'html_id' => $this->html_id,
+        'width' => $this->width,
+        'percentage' => $this->percentage,
+    ];
   }
 }
