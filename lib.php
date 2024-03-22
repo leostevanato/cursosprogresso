@@ -148,10 +148,12 @@ function cursosprogresso_cm_info_view(cm_info $cm) {
     $listacursos = new \mod_cursosprogresso\output\lista_cursos($cm);
     $selectedcourses_html = $renderer->render($listacursos);
 
+    $cursos_completados_pct = $listacursos->get_cursos_completados_porcentagem();
+
     $barraprogresso_html = "";
 
     if ($DB->get_field('cursosprogresso_cursos', 'showprogressbar', ['cursosprogressoid' => $cursosprogresso->id])) {
-        $barraprogresso = new \mod_cursosprogresso\output\barra_progresso('bp_cursos_completados', $listacursos->get_cursos_completados_porcentagem());
+        $barraprogresso = new \mod_cursosprogresso\output\barra_progresso('bp_cursos_completados', $cursos_completados_pct);
         $barraprogresso_html = $renderer->render($barraprogresso);
     }
 
