@@ -65,5 +65,20 @@ function xmldb_cursosprogresso_upgrade($oldversion)
         upgrade_mod_savepoint(true, 2024030813, 'cursosprogresso');
     }
 
+    if ($oldversion < 2024032102) {
+
+        // Define field dividprogressbar to be added to cursosprogresso_cursos.
+        $table = new xmldb_table('cursosprogresso_cursos');
+        $field = new xmldb_field('dividprogressbar', XMLDB_TYPE_CHAR, '60', null, null, null, null, 'showprogressbar');
+
+        // Conditionally launch add field dividprogressbar.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Cursosprogresso savepoint reached.
+        upgrade_mod_savepoint(true, 2024032102, 'cursosprogresso');
+    }
+
     return true;
 }
