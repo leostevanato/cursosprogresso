@@ -31,7 +31,7 @@ function formatarPorcentagem(porcentagem, casasDecimais = 0, incluirSimbolo = tr
   if (porcentagem < 100) {
     porcentagem = porcentagem.toFixed(casasDecimais);
     const [integerPart, decimalPart] = porcentagem.split('.');
-    porcentagem = decimalPart ? porcentagem : integerPart;
+    porcentagem = decimalPart > 0 ? porcentagem : integerPart;
   }
 
   return incluirSimbolo ? `${porcentagem}%` : porcentagem;
@@ -46,7 +46,7 @@ export const init = ({barraprogressodivid, barraprogressopct}) => {
   const bpPctTexto = barraProgresso.querySelector('.porcetagem-texto');
   const bpBarraCirculo = bpBarra.querySelector('.circulo-indicador');
   const bpBarraProgresso = bpBarra.querySelector('.progresso');
-  const larguraBarraCirculo = '30px';
+  const larguraBarraCirculo = `${(30 / 2)}px`;
 
   bpBarraCirculo.style.left = `calc(${barraprogressopct}% - ${larguraBarraCirculo})`;
   bpBarraProgresso.style.width = `${barraprogressopct}%`;
