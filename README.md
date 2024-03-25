@@ -5,6 +5,15 @@ Lista cursos e mostra quais o aluno já completou.
 O plugin gera uma lista de cursos previamente selecionados. Quando o aluno acessa o
 curso onde o recurso foi adicionado, ele consegue ver quais cursos ele já completou.
 
+## Desenvolvimento ##
+
+Caso se esteja desenvolvendo o Moodle localmente (Ex: xampp) é recomendado que se instale
+o nvm e o grunt. O grunt minifica o javascript para o formato usado pelo Moodle. O ideal
+é usar o grunt com o watchman, através do comando grunt watch ou senão lembrar de executar
+o grunt direcionado para a pasta onde os arquivos js estão, caso contrário o grunt vai
+compilar todos os javascript do Moodle e levará muito tempo.
+https://moodledev.io/general/development/tools/nodejs
+
 ## Installing via uploaded ZIP file ##
 
 1. Log in to your Moodle site as an admin and go to _Site administration >
