@@ -58,16 +58,10 @@ function cursosprogresso_add_instance($moduleinstance, $mform = null) {
     global $DB;
 
     $moduleinstance->timecreated = time();
+    $moduleinstance->cursoscsv = implode(',', $moduleinstance->selectedcourses);
+    $moduleinstance->showprogressbar = 1;
 
     $id = $DB->insert_record('cursosprogresso', $moduleinstance);
-    
-    $cursos = new stdClass();
-    $cursos->cursosprogressoid = $id;
-    $cursos->cursoscsv = implode(',', $moduleinstance->selectedcourses);
-    $cursos->showprogressbar = 1;
-    $cursos->timemodified = time();
-
-    $DB->insert_record('cursosprogresso_cursos', $cursos);
 
     return $id;
 }
@@ -88,21 +82,15 @@ function cursosprogresso_update_instance($moduleinstance, $mform = null) {
     $moduleinstance->timemodified = time();
     $moduleinstance->id = $moduleinstance->instance;
     
-    $cursos = new stdClass();
-    $cursos->cursosprogressoid = $moduleinstance->id;
-    $cursos->cursoscsv = implode(',', $moduleinstance->selectedcourses);
-    $cursos->showprogressbar = $moduleinstance->showprogressbar;
-    $cursos->timemodified = time();
+    $moduleinstance->cursoscsv = implode(',', $moduleinstance->selectedcourses);
+    $moduleinstance->showprogressbar = $moduleinstance->showprogressbar;
     
-    $cursosprogresso_cursos = $DB->get_record('cursosprogresso_cursos', array('cursosprogressoid' => $moduleinstance->id));
-    
-    if ($cursosprogresso_cursos && $cursosprogresso_cursos->id > 0) {
-        $cursos->id = $cursosprogresso_cursos->id;
-        $DB->update_record('cursosprogresso_cursos', $cursos);
-    } else {
-        $DB->insert_record('cursosprogresso_cursos', $cursos);
+    if (isset($moduleinstance->barraprogressodivid)) {
+        $moduleinstance->dividprogressbar = $moduleinstance->barraprogressodivid;
     }
 
+    $moduleinstance->timemodified = time();
+    
     return $DB->update_record('cursosprogresso', $moduleinstance);
 }
 
@@ -116,10 +104,6 @@ function cursosprogresso_delete_instance($id) {
     global $DB;
 
     if (!$DB->get_record('cursosprogresso', array('id' => $id))) {
-        return false;
-    }
-
-    if (!$DB->delete_records('cursosprogresso_cursos', array("cursosprogressoid" => $id))) {
         return false;
     }
 
@@ -140,7 +124,7 @@ function cursosprogresso_cm_info_view(cm_info $cm) {
     global $DB;
     global $PAGE;
 
-    if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['course' => $cm->course], 'id,name')) {
+    if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['course' => $cm->course], 'id,name,cursoscsv,showprogressbar,dividprogressbar')) {
         return false;
     }
     
@@ -151,11 +135,12 @@ function cursosprogresso_cm_info_view(cm_info $cm) {
     $cursos_completados_pct = $listacursos->get_cursos_completados_porcentagem();
 
     $barraprogresso_html = "";
+    
+    $pbdivid = $cursosprogresso->showprogressbar ? 'bp_cursos_completados' : $cursosprogresso->dividprogressbar;
 
-    if ($DB->get_field('cursosprogresso_cursos', 'showprogressbar', ['cursosprogressoid' => $cursosprogresso->id])) {
-        $barraprogresso = new \mod_cursosprogresso\output\barra_progresso('bp_cursos_completados', $cursos_completados_pct);
-        $barraprogresso_html = $renderer->render($barraprogresso);
-    }
+    $barraprogresso = new \mod_cursosprogresso\output\barra_progresso($pbdivid, $cursos_completados_pct, $cursosprogresso->showprogressbar);
+    
+    $barraprogresso_html = $renderer->render($barraprogresso);
 
     $conteudo_html = '<div class="text-start text-left font-weight-bold fw-bold">'. $cursosprogresso->name . '</div>'. $selectedcourses_html .'<br>'. $barraprogresso_html;
     

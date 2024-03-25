@@ -41,44 +41,5 @@ function xmldb_cursosprogresso_upgrade($oldversion)
     // You will also have to create the db/install.xml file by using the XMLDB Editor.
     // Documentation for the XMLDB Editor can be found at {@link https://docs.moodle.org/dev/XMLDB_editor}.
 
-    if ($oldversion < 2024030813) {
-        // Define table cursosprogresso_cursos to be created.
-        $table = new xmldb_table('cursosprogresso_cursos');
-
-        // Adding fields to table cursosprogresso_cursos.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('cursosprogressoid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('cursoscsv', XMLDB_TYPE_CHAR, '255', null, null, null, null);
-        $table->add_field('showprogressbar', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1');
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-
-        // Adding keys to table cursosprogresso_cursos.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
-        $table->add_key('cursosprogressoid', XMLDB_KEY_FOREIGN, ['cursosprogressoid'], 'cursosprogresso', ['id']);
-
-        // Conditionally launch create table for cursosprogresso_cursos.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-        // Cursosprogresso savepoint reached.
-        upgrade_mod_savepoint(true, 2024030813, 'cursosprogresso');
-    }
-
-    if ($oldversion < 2024032102) {
-
-        // Define field dividprogressbar to be added to cursosprogresso_cursos.
-        $table = new xmldb_table('cursosprogresso_cursos');
-        $field = new xmldb_field('dividprogressbar', XMLDB_TYPE_CHAR, '60', null, null, null, null, 'showprogressbar');
-
-        // Conditionally launch add field dividprogressbar.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Cursosprogresso savepoint reached.
-        upgrade_mod_savepoint(true, 2024032102, 'cursosprogresso');
-    }
-
     return true;
 }

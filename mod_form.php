@@ -107,11 +107,10 @@ class mod_cursosprogresso_mod_form extends moodleform_mod {
         global $COURSE;
         global $DB;
 
-        if (!$cursosprogressoid = $DB->get_field('cursosprogresso', 'id', ['course' => $COURSE->id])) {
+        if (!$selectedcourses = $DB->get_field('cursosprogresso', 'cursoscsv', ['course' => $COURSE->id])) {
             return false;
         }
-        
-        $selectedcourses = $DB->get_field('cursosprogresso_cursos', 'cursoscsv', ['cursosprogressoid' => $cursosprogressoid]);
+                
         $selectedcourses = explode(',', $selectedcourses);
 
         return $selectedcourses;
@@ -123,11 +122,11 @@ class mod_cursosprogresso_mod_form extends moodleform_mod {
         global $DB;
         
         // Aqui retornamos true pois o valor padrão do campo select é SIM, então não podemos retornar false.
-        if (!$cursosprogressoid = $DB->get_field('cursosprogresso', 'id', ['course' => $COURSE->id])) {
+        if (!$showprogressbar = $DB->get_field('cursosprogresso', 'showprogressbar', ['course' => $COURSE->id])) {
             return true;
         }
 
-        return $DB->get_field('cursosprogresso_cursos', 'showprogressbar', ['cursosprogressoid' => $cursosprogressoid]);
+        return $showprogressbar;
     }
 
     protected function specific_definition($mform) {

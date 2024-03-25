@@ -57,11 +57,11 @@ class lista_cursos implements templatable, renderable {
 
         $data = [];
 
-        if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['course' => $this->cm->course], 'id, name')) {
+        if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['course' => $this->cm->course], 'id, name,cursoscsv')) {
             return false;
         }
         
-        $selectedcourses = $DB->get_field('cursosprogresso_cursos', 'cursoscsv', ['cursosprogressoid' => $cursosprogresso->id]);
+        $selectedcourses = $cursosprogresso->cursoscsv;
         $selectedcourses = explode(',', $selectedcourses);
         
         foreach ($selectedcourses as $courseid) {
