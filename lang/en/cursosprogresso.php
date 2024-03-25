@@ -35,3 +35,6 @@ $string['pluginadministration'] = 'Cursos Progresso administração';
 $string['cursosprogressofieldset'] = 'Opções de Cursos Progresso';
 $string['selectedcourses'] = 'Cursos selecionados';
 $string['showprogressbar'] = 'Exibir barra de progresso padrão';
+$string['showprogressbar_help'] = 'Sim - exibe a barra de progresso do plugin na posição onde o plugin foi adiciona.
+
+Não - Exibe a barra de progresso no elemento com o ID informado. Nesse caso, o elemento deve ser adicionado de forma manual.';

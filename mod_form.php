@@ -73,6 +73,7 @@ class mod_cursosprogresso_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'showprogressbar', get_string('showprogressbar', 'mod_cursosprogresso'));
         // Se o campo showprogressbar não estiver setado no banco, 
         $mform->getElement('showprogressbar')->setSelected($this->get_mostrar_barra_progresso());
+        $mform->addHelpButton('showprogressbar', 'showprogressbar', 'mod_cursosprogresso');
         
         $mform->addElement('text', 'barraprogressodivid', 'ID da div da barra de progresso');
         $mform->setType('barraprogressodivid', PARAM_NOTAGS);
