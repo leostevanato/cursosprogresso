@@ -32,9 +32,11 @@
     {
         "html_id": "barra-progresso"
         "width": "500px",
-        "percentage": 38
+        "percentage": 38,
+        "showdefault": true
     }
 }}
+{{#showdefault}}
 <div id="{{html_id}}" class="progressbar_container mb-3 ml-3" style="width: {{width}}">
     <div class="progress rounded">
         <div id="{{html_id}}_bar" class="progress-bar progress-bar-striped" role="progressbar" aria-value="0" aria-valuemin="0" aria-valuemax="100" style="width: {{percentage}}%"></div>
@@ -61,3 +63,4 @@ if (pct < 100) {
 
 pb_pct.textContent = pct + "%";
 </script>
+{{/showdefault}}

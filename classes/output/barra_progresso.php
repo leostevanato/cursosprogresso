@@ -21,6 +21,8 @@ class barra_progresso implements renderable, templatable {
   private $html_id;
   /** @var int porcentagem inicial */
   private $percentage = 0;
+  /** @var bool mostrar a barra de progresso padrão */
+  private $showdefault = true;
   /** @var string total width com unidade de medida */
   private $width;
 
@@ -29,9 +31,10 @@ class barra_progresso implements renderable, templatable {
    *
    * @param string $htmlid O HTML ID.
    * @param int $percentage A porcentagem.
+   * @param bool $showdefault Se é pra mostrar a barra de progresso padrão.
    * @param int $width A largura do elemento.
    */
-  public function __construct($htmlid = '', $percentage = 0, $width = "400px") {
+  public function __construct($htmlid = '', $percentage = 0, $showdefault = true, $width = "400px") {
       if (!empty($htmlid)) {
           $this->html_id  = $htmlid;
       } else {
@@ -39,6 +42,7 @@ class barra_progresso implements renderable, templatable {
       }
 
       $this->percentage = $percentage;
+      $this->showdefault = $showdefault;
       $this->width = $width;
   }
 
@@ -51,15 +55,18 @@ class barra_progresso implements renderable, templatable {
   public function export_for_template(renderer_base $output) {
     global $PAGE;
 
-    $PAGE->requires->js_call_amd('mod_cursosprogresso/barradeprogresso', 'init', [[
-        'barraprogressodivid' => 'barra-de-progresso-1',
-        'barraprogressopct' => '70.5'
-    ]]);
+    if (!$this->showdefault) {
+        $PAGE->requires->js_call_amd('mod_cursosprogresso/barradeprogresso', 'init', [[
+            'barraprogressodivid' => $this->html_id,
+            'barraprogressopct' => $this->percentage
+        ]]);
+    }
 
     return [
         'html_id' => $this->html_id,
         'width' => $this->width,
         'percentage' => $this->percentage,
+        'showdefault' => $this->showdefault
     ];
   }
 }
