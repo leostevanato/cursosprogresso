@@ -107,7 +107,7 @@ class mod_cursosprogresso_mod_form extends moodleform_mod {
         global $COURSE;
         global $DB;
 
-        if (!$selectedcourses = $DB->get_field('cursosprogresso', 'cursoscsv', ['course' => $COURSE->id])) {
+        if (!$selectedcourses = $DB->get_field('cursosprogresso', 'selectedcourses', ['course' => $COURSE->id])) {
             return false;
         }
                 

@@ -58,7 +58,7 @@ function cursosprogresso_add_instance($moduleinstance, $mform = null) {
     global $DB;
 
     $moduleinstance->timecreated = time();
-    $moduleinstance->cursoscsv = implode(',', $moduleinstance->selectedcourses);
+    $moduleinstance->selectedcourses = implode(',', $moduleinstance->selectedcourses);
     $moduleinstance->showprogressbar = 1;
 
     $id = $DB->insert_record('cursosprogresso', $moduleinstance);
@@ -82,7 +82,7 @@ function cursosprogresso_update_instance($moduleinstance, $mform = null) {
     $moduleinstance->timemodified = time();
     $moduleinstance->id = $moduleinstance->instance;
     
-    $moduleinstance->cursoscsv = implode(',', $moduleinstance->selectedcourses);
+    $moduleinstance->selectedcourses = implode(',', $moduleinstance->selectedcourses);
     $moduleinstance->showprogressbar = $moduleinstance->showprogressbar;
     
     if (isset($moduleinstance->barraprogressodivid)) {
@@ -124,7 +124,7 @@ function cursosprogresso_cm_info_view(cm_info $cm) {
     global $DB;
     global $PAGE;
 
-    if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['course' => $cm->course], 'id,name,cursoscsv,showprogressbar,dividprogressbar')) {
+    if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['course' => $cm->course], 'id,name,selectedcourses,showprogressbar,dividprogressbar')) {
         return false;
     }
     
