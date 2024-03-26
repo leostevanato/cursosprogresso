@@ -57,9 +57,13 @@ function mod_cursosprogresso_get_icon($size = null) {
 function cursosprogresso_add_instance($moduleinstance, $mform = null) {
     global $DB;
 
-    $moduleinstance->timecreated = time();
+    $moduleinstance->timemodified = time();
     $moduleinstance->selectedcourses = implode(',', $moduleinstance->selectedcourses);
-    $moduleinstance->showprogressbar = 1;
+    // Se o nome do campo no formulário for diferente do nome do campo no banco
+    // os valores são referenciados assim:
+    // $moduleinstance->htmlidcourseslist = $moduleinstance->listacursoshtmlid;
+    // $moduleinstance->htmlclasscourseitem = $moduleinstance->itemcursohtmlclass;
+    // $moduleinstance->dividprogressbar = $moduleinstance->barraprogressodivid;
 
     $id = $DB->insert_record('cursosprogresso', $moduleinstance);
 
@@ -83,11 +87,6 @@ function cursosprogresso_update_instance($moduleinstance, $mform = null) {
     $moduleinstance->id = $moduleinstance->instance;
     
     $moduleinstance->selectedcourses = implode(',', $moduleinstance->selectedcourses);
-    $moduleinstance->showprogressbar = $moduleinstance->showprogressbar;
-    
-    if (isset($moduleinstance->barraprogressodivid)) {
-        $moduleinstance->dividprogressbar = $moduleinstance->barraprogressodivid;
-    }
 
     $moduleinstance->timemodified = time();
     

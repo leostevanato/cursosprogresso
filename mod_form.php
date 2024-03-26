@@ -89,9 +89,9 @@ class mod_cursosprogresso_mod_form extends moodleform_mod {
         $mform->getElement('showprogressbar')->setSelected($this->get_mostrar_barra_progresso());
         $mform->addHelpButton('showprogressbar', 'showprogressbar', 'mod_cursosprogresso');
         
-        $mform->addElement('text', 'barraprogressodivid', 'ID da div da barra de progresso');
-        $mform->setType('barraprogressodivid', PARAM_NOTAGS);
-        $mform->hideIf('barraprogressodivid', 'showprogressbar', 'eq', 1);
+        $mform->addElement('text', 'dividprogressbar', get_string('dividprogressbar', 'mod_cursosprogresso'));
+        $mform->setType('dividprogressbar', PARAM_NOTAGS);
+        $mform->hideIf('dividprogressbar', 'showprogressbar', 'eq', 1);
 
         // Add standard elements.
         $this->standard_coursemodule_elements();
