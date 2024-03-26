@@ -34,7 +34,15 @@ $string['pluginadministration'] = 'Cursos Progresso administração';
 
 $string['cursosprogressofieldset'] = 'Opções de Cursos Progresso';
 $string['selectedcourses'] = 'Cursos selecionados';
+$string['showcourseslist'] = 'Exibir lista de cursos padrão';
+$string['showcourseslist_help'] = 'Sim - exibe a lista de cursos do plugin na posição onde o plugin foi adiciona.
+
+Não - Exibe a lista de cursos no elemento com o ID informado. Nesse caso, o elemento deve ser adicionado de forma manual.';
+$string['htmlidcourseslist'] = 'ID do elemento da lista de cursos';
+$string['htmlclasscourseitem'] = 'Classe do elemento do item de curso';
+
 $string['showprogressbar'] = 'Exibir barra de progresso padrão';
 $string['showprogressbar_help'] = 'Sim - exibe a barra de progresso do plugin na posição onde o plugin foi adiciona.
 
 Não - Exibe a barra de progresso no elemento com o ID informado. Nesse caso, o elemento deve ser adicionado de forma manual.';
+$string['dividprogressbar'] = 'ID da div da barra de progresso';
