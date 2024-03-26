@@ -124,7 +124,7 @@ function cursosprogresso_cm_info_view(cm_info $cm) {
     global $DB;
     global $PAGE;
 
-    if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['course' => $cm->course], 'id,name,selectedcourses,showprogressbar,dividprogressbar')) {
+    if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['id' => $cm->instance], 'id,name,selectedcourses,showprogressbar,dividprogressbar')) {
         return false;
     }
     

@@ -57,7 +57,7 @@ class lista_cursos implements templatable, renderable {
 
         $data = [];
 
-        if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['course' => $this->cm->course], 'id, name,selectedcourses')) {
+        if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['id' => $this->cm->instance], 'id, name,selectedcourses')) {
             return false;
         }
         

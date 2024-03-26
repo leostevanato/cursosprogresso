@@ -104,10 +104,9 @@ class mod_cursosprogresso_mod_form extends moodleform_mod {
 
     // Função para obter os cursos selecionados do banco de dados.
     private function get_cursos_selecionados() {
-        global $COURSE;
         global $DB;
 
-        if (!$selectedcourses = $DB->get_field('cursosprogresso', 'selectedcourses', ['course' => $COURSE->id])) {
+        if (!$selectedcourses = $DB->get_field('cursosprogresso', 'selectedcourses', ['id' => $this->current->id])) {
             return false;
         }
                 
@@ -118,11 +117,10 @@ class mod_cursosprogresso_mod_form extends moodleform_mod {
 
     // Função para obter a opção show progress bar do banco de dados.
     private function get_mostrar_barra_progresso() {
-        global $COURSE;
         global $DB;
         
         // Aqui retornamos true pois o valor padrão do campo select é SIM, então não podemos retornar false.
-        if (!$showprogressbar = $DB->get_field('cursosprogresso', 'showprogressbar', ['course' => $COURSE->id])) {
+        if (!$showprogressbar = $DB->get_field('cursosprogresso', 'showprogressbar', ['id' => $this->current->id])) {
             return true;
         }
 
