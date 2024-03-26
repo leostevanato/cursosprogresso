@@ -69,6 +69,20 @@ class mod_cursosprogresso_mod_form extends moodleform_mod {
         // Preencher o multiselect com os cursos selecionados, caso existam.
         $mform->getElement('selectedcourses')->setSelected($this->get_cursos_selecionados());
 
+        // Adicionando o elemento indicando se é pra mostrar a lista de cursos.
+        $mform->addElement('selectyesno', 'showcourseslist', get_string('showcourseslist', 'mod_cursosprogresso'));
+
+        $mform->getElement('showcourseslist')->setSelected($this->get_mostrar_lista_cursos());
+        $mform->addHelpButton('showcourseslist', 'showcourseslist', 'mod_cursosprogresso');
+
+        $mform->addElement('text', 'htmlidcourseslist', get_string('htmlidcourseslist', 'mod_cursosprogresso'));
+        $mform->setType('htmlidcourseslist', PARAM_NOTAGS);
+        $mform->hideIf('htmlidcourseslist', 'showcourseslist', 'eq', 1);
+
+        $mform->addElement('text', 'htmlclasscourseitem', get_string('htmlclasscourseitem', 'mod_cursosprogresso'));
+        $mform->setType('htmlclasscourseitem', PARAM_NOTAGS);
+        $mform->hideIf('htmlclasscourseitem', 'showcourseslist', 'eq', 1);
+
         // Adicionando o elemento indicando se é pra usar a barra de progresso.
         $mform->addElement('selectyesno', 'showprogressbar', get_string('showprogressbar', 'mod_cursosprogresso'));
 
