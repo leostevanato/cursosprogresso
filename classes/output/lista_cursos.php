@@ -25,6 +25,7 @@
 namespace core_course;
 namespace mod_cursosprogresso\output;
 
+use core_completion\progress;
 use completion_completion;
 use templatable;
 use renderer_base;
@@ -54,27 +55,37 @@ class lista_cursos implements templatable, renderable {
     public function export_for_template(renderer_base $output): array {
         global $DB;
         global $USER;
+        global $PAGE;
 
         $data = [];
 
-        if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['id' => $this->cm->instance], 'id, name,selectedcourses')) {
+        if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['id' => $this->cm->instance], 'id, name,selectedcourses,showcourseslist,htmlidcourseslist,htmlclasscourseitem')) {
             return false;
         }
-        
-        $selectedcourses = $cursosprogresso->selectedcourses;
-        $selectedcourses = explode(',', $selectedcourses);
+
+        $selectedcourses = explode(',', $cursosprogresso->selectedcourses);
         
         foreach ($selectedcourses as $courseid) {
-            $completion = new completion_completion(['course' => $courseid, 'userid' => $USER->id]);
+            // $course_progress = new \completion_info(get_course($courseid));
+            $status = $this->get_usuario_curso_status($USER->id, $courseid);
 
             $data['cursos'][] = [
                 'courseid' => $courseid,
                 'fullname' => get_course($courseid)->fullname,
-                'completed' => $completion->is_complete()
+                'completed' => $status == "completo" ? true : false,
+                'status' => $status
             ];
         }
 
         $this->cursos_selecionados = $data;
+
+        $data["course_list_html_id"] = $cursosprogresso->htmlidcourseslist;
+        $data["course_list_html_class"] = $cursosprogresso->htmlclasscourseitem;
+        $data["showdefault"] = $cursosprogresso->showcourseslist;
+
+        if (!$cursosprogresso->showcourseslist) {
+            $PAGE->requires->js_call_amd('mod_cursosprogresso/listacursos', 'init', [$data]);
+        }
 
         return $data;
     }
