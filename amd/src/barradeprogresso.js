@@ -39,19 +39,23 @@ function formatarPorcentagem(porcentagem, casasDecimais = 0, incluirSimbolo = tr
 
 export const init = ({barraprogressodivid, barraprogressopct}) => {
   barraprogressodivid = converterParaSeletorId(barraprogressodivid);
-  const barraProgressoContainer = document.querySelector(barraprogressodivid);
-  const barraProgresso = barraProgressoContainer.querySelector('.barra-de-progresso');
-  const bpCarregando = barraProgresso.querySelector('.carregando');
-  const bpBarra = barraProgresso.querySelector('.barra');
-  const bpPctTexto = barraProgresso.querySelector('.porcetagem-texto');
-  const bpBarraCirculo = bpBarra.querySelector('.circulo-indicador');
-  const bpBarraProgresso = bpBarra.querySelector('.progresso');
-  const larguraBarraCirculo = `${(30 / 2)}px`;
 
-  bpBarraCirculo.style.left = `calc(${barraprogressopct}% - ${larguraBarraCirculo})`;
-  bpBarraProgresso.style.width = `${barraprogressopct}%`;
-  bpPctTexto.textContent = formatarPorcentagem(barraprogressopct, 1);
-  bpCarregando.style.display = 'none';
-  bpBarra.style.display = 'block';
-  bpPctTexto.style.display = 'block';
+  const barraProgressoContainer = document.querySelector(barraprogressodivid);
+
+  if (barraProgressoContainer) {
+    const barraProgresso = barraProgressoContainer.querySelector('.barra-de-progresso');
+    const bpCarregando = barraProgresso.querySelector('.carregando');
+    const bpBarra = barraProgresso.querySelector('.barra');
+    const bpPctTexto = barraProgresso.querySelector('.porcetagem-texto');
+    const bpBarraCirculo = bpBarra.querySelector('.circulo-indicador');
+    const bpBarraProgresso = bpBarra.querySelector('.progresso');
+    const larguraBarraCirculo = `${(30 / 2)}px`;
+
+    bpBarraCirculo.style.left = `calc(${barraprogressopct}% - ${larguraBarraCirculo})`;
+    bpBarraProgresso.style.width = `${barraprogressopct}%`;
+    bpPctTexto.textContent = formatarPorcentagem(barraprogressopct, 1);
+    bpCarregando.style.display = 'none';
+    bpBarra.style.display = 'block';
+    bpPctTexto.style.display = 'block';
+  }
 };
