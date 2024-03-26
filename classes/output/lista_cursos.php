@@ -98,4 +98,16 @@ class lista_cursos implements templatable, renderable {
 
         return $conta_completos_pct;
     }
+
+    public function get_usuario_curso_status($usuarioid, $cursoid) {
+        $coursecontext = \context_course::instance($cursoid);
+
+        if (is_enrolled($coursecontext, $usuarioid)) {
+            $completion = new completion_completion(['course' => $cursoid, 'userid' => $usuarioid]);
+
+            return $completion->is_complete() ? 'completo' : 'incompleto';
+        }
+        
+        return "nao_inscrito";
+    }
 }
