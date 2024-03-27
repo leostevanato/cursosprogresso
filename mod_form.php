@@ -83,6 +83,10 @@ class mod_cursosprogresso_mod_form extends moodleform_mod {
         $mform->setType('htmlclasscourseitem', PARAM_NOTAGS);
         $mform->hideIf('htmlclasscourseitem', 'showcourseslist', 'eq', 1);
 
+        $mform->addElement('text', 'htmlclasscoursestatus', get_string('htmlclasscoursestatus', 'mod_cursosprogresso'));
+        $mform->setType('htmlclasscoursestatus', PARAM_NOTAGS);
+        $mform->hideIf('htmlclasscoursestatus', 'showcourseslist', 'eq', 1);
+
         // Adicionando o elemento indicando se é pra usar a barra de progresso.
         $mform->addElement('selectyesno', 'showprogressbar', get_string('showprogressbar', 'mod_cursosprogresso'));
 
