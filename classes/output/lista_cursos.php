@@ -79,8 +79,8 @@ class lista_cursos implements templatable, renderable {
 
         $this->cursos_selecionados = $data;
 
-        $data["course_list_html_id"] = $cursosprogresso->htmlidcourseslist;
-        $data["course_list_html_class"] = $cursosprogresso->htmlclasscourseitem;
+        $data["courseListHtmlId"] = $cursosprogresso->htmlidcourseslist;
+        $data["courseListHtmlClass"] = $cursosprogresso->htmlclasscourseitem;
         $data["showdefault"] = $cursosprogresso->showcourseslist;
 
         if (!$cursosprogresso->showcourseslist) {
