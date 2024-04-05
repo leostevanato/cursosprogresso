@@ -17,9 +17,43 @@ function converterParaSeletor(seletor, tipo) {
   return seletor;
 }
 
-export const init = ({courseListHtmlId, courseListHtmlClass}) => {
+export const init = ({cursos, courseListHtmlId, courseListHtmlClass}) => {
   const cursosId = converterParaSeletor(courseListHtmlId, "id");
   const cursoClass = converterParaSeletor(courseListHtmlClass, "class");
+
+  const cursosCards = document.querySelectorAll(cursoClass);
+
+  window.console.log(cursos);
+
+  let cursoArray = [];
+  let cursoStatus = "";
+  let cursoStatusTexto = "";
+
+  cursosCards.forEach(cursoElemento => {
+    cursoArray = cursos.find(curso => curso.courseid == cursoElemento.dataset.cursoid);
+
+    window.console.log(cursoArray);
+
+    if (cursoArray && cursoArray.length > 0) {
+      switch (cursoArray.status) {
+        case "completo":
+          cursoStatus = "concluido";
+          cursoStatusTexto = "Concluido";
+          break;
+        case "incompleto":
+          cursoStatus = "continuar";
+          cursoStatusTexto = "Continuar";
+          break;
+        default:
+          cursoStatus = "acessar";
+          cursoStatusTexto = "Acessar";
+          break;
+      }
+
+      cursoElemento.querySelector(".curso-card-status").dataset.status = cursoStatus;
+      cursoElemento.querySelector(".curso-card-status").textContent = cursoStatusTexto;
+    }
+  });
 
   return cursosId + ' ' + cursoClass;
 };
