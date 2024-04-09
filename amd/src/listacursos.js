@@ -50,5 +50,6 @@ export const init = ({cursos, courseListHtmlId, courseListHtmlClass}) => {
     }
   });
 
+  // Retorno sem uso no momento, apenas para usar o cursosId e o grunt não reclamar.
   return cursosId + ' ' + cursoClass;
 };
