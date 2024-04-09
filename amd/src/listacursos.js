@@ -20,10 +20,7 @@ function converterParaSeletor(seletor, tipo) {
 export const init = ({cursos, courseListHtmlId, courseListHtmlClass}) => {
   const cursosId = converterParaSeletor(courseListHtmlId, "id");
   const cursoClass = converterParaSeletor(courseListHtmlClass, "class");
-
   const cursosCards = document.querySelectorAll(cursoClass);
-
-  window.console.log(cursos);
 
   let cursoArray = [];
   let cursoStatus = "";
@@ -31,8 +28,6 @@ export const init = ({cursos, courseListHtmlId, courseListHtmlClass}) => {
 
   cursosCards.forEach(cursoElemento => {
     cursoArray = cursos.find(curso => curso.courseid == cursoElemento.dataset.cursoid);
-
-    window.console.log(cursoArray);
 
     if (cursoArray && cursoArray.length > 0) {
       switch (cursoArray.status) {
