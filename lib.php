@@ -127,7 +127,10 @@ function cursosprogresso_cm_info_view(cm_info $cm) {
         return false;
     }
     
+    $PAGE->requires->js_call_amd('mod_cursosprogresso/cursosprogressomain', 'init');
+
     $renderer = $PAGE->get_renderer('mod_cursosprogresso');
+
     $listacursos = new \mod_cursosprogresso\output\lista_cursos($cm);
     $selectedcourses_html = $renderer->render($listacursos);
 
@@ -140,9 +143,15 @@ function cursosprogresso_cm_info_view(cm_info $cm) {
     $barraprogresso = new \mod_cursosprogresso\output\barra_progresso($pbdivid, $cursos_completados_pct, $cursosprogresso->showprogressbar);
     
     $barraprogresso_html = $renderer->render($barraprogresso);
-
-    $conteudo_html = '<div class="text-start text-left font-weight-bold fw-bold">'. $cursosprogresso->name . '</div>'. $selectedcourses_html .'<br>'. $barraprogresso_html;
     
+    if (has_capability('moodle/site:config', $cm->context) || !empty($selectedcourses_html) || !empty($barraprogresso_html)) {
+        $conteudo_html = '<div class="text-start text-left font-weight-bold fw-bold">'. $cursosprogresso->name . '</div>'. $selectedcourses_html .'<br>'. $barraprogresso_html;
+    } else {
+        // Adiciona div com essa classe para que o ul possa ser escondido via js quando o plugin não
+        // possuir nenhum conteúdo (por exemplo, caso se esteja usando HTML sem ser do plugin).
+        $conteudo_html = '<div class="esconder-ul-pai"></div>';
+    }
+
     $cm->set_content($conteudo_html);
 }
 
