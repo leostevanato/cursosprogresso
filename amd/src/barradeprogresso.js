@@ -37,7 +37,7 @@ function formatarPorcentagem(porcentagem, casasDecimais = 0, incluirSimbolo = tr
   return incluirSimbolo ? `${porcentagem}%` : porcentagem;
 }
 
-export const init = ({barraprogressodivid, barraprogressopct}) => {
+export const initBarraProgresso = ({barraprogressodivid, barraprogressopct}) => {
   barraprogressodivid = converterParaSeletorId(barraprogressodivid);
 
   const barraProgressoContainer = document.querySelector(barraprogressodivid);

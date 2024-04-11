@@ -17,7 +17,7 @@ function converterParaSeletor(seletor, tipo) {
   return seletor;
 }
 
-export const init = ({cursos, courseListHtmlId, courseListHtmlClass}) => {
+export const initListaCursos = ({cursos, courseListHtmlId, courseListHtmlClass}) => {
   const cursosId = converterParaSeletor(courseListHtmlId, "id");
   const cursoClass = converterParaSeletor(courseListHtmlClass, "class");
   const cursosCards = document.querySelectorAll(cursoClass);

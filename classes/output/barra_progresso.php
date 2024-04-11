@@ -56,7 +56,7 @@ class barra_progresso implements renderable, templatable {
     global $PAGE;
 
     if (!$this->showdefault) {
-        $PAGE->requires->js_call_amd('mod_cursosprogresso/barradeprogresso', 'init', [[
+        $PAGE->requires->js_call_amd('mod_cursosprogresso/barradeprogresso', 'initBarraProgresso', [[
             'barraprogressodivid' => $this->html_id,
             'barraprogressopct' => $this->percentage
         ]]);

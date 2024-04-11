@@ -84,7 +84,7 @@ class lista_cursos implements templatable, renderable {
         $data["showdefault"] = $cursosprogresso->showcourseslist;
 
         if (!$cursosprogresso->showcourseslist) {
-            $PAGE->requires->js_call_amd('mod_cursosprogresso/listacursos', 'init', [$data]);
+            $PAGE->requires->js_call_amd('mod_cursosprogresso/listacursos', 'initListaCursos', [$data]);
         }
 
         return $data;
