@@ -58,6 +58,7 @@ class lista_cursos implements templatable, renderable {
         global $PAGE;
 
         $data = [];
+        $datajs = [];
 
         if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['id' => $this->cm->instance], 'id, name,selectedcourses,showcourseslist,htmlidcourseslist,htmlclasscourseitem')) {
             return false;
@@ -66,7 +67,6 @@ class lista_cursos implements templatable, renderable {
         $selectedcourses = explode(',', $cursosprogresso->selectedcourses);
         
         foreach ($selectedcourses as $courseid) {
-            // $course_progress = new \completion_info(get_course($courseid));
             $status = $this->get_usuario_curso_status($USER->id, $courseid);
 
             $data['cursos'][] = [
@@ -74,6 +74,11 @@ class lista_cursos implements templatable, renderable {
                 'fullname' => get_course($courseid)->fullname,
                 'completed' => $status == "completo" ? true : false,
                 'status' => $status
+            ];
+
+            $datajs[] = [
+                'id' => $courseid,
+                's' => substr($status, 0, 1) // c, i ou n (completo, incompleto, não inscrito)
             ];
         }
 
@@ -84,7 +89,7 @@ class lista_cursos implements templatable, renderable {
         $data["showdefault"] = $cursosprogresso->showcourseslist;
 
         if (!$cursosprogresso->showcourseslist) {
-            $PAGE->requires->js_call_amd('mod_cursosprogresso/listacursos', 'initListaCursos', [$data]);
+            $PAGE->requires->js_call_amd('mod_cursosprogresso/listacursos', 'init', [$datajs]);
         }
 
         return $data;
@@ -118,7 +123,7 @@ class lista_cursos implements templatable, renderable {
 
             return $completion->is_complete() ? 'completo' : 'incompleto';
         }
-        
+
         return "nao_inscrito";
     }
 }

@@ -26,6 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_cursosprogresso';
 $plugin->release = '0.4.0';
-$plugin->version = 2024041100;
+$plugin->version = 2024041105;
 $plugin->requires = 2018120300;
 $plugin->maturity = MATURITY_BETA;
