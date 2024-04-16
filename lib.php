@@ -122,6 +122,7 @@ function cursosprogresso_delete_instance($id) {
 function cursosprogresso_cm_info_view(cm_info $cm) {
     global $DB;
     global $PAGE;
+    global $USER;
 
     if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['id' => $cm->instance], 'id,name,selectedcourses,showprogressbar,dividprogressbar')) {
         return false;
@@ -130,6 +131,26 @@ function cursosprogresso_cm_info_view(cm_info $cm) {
     $PAGE->requires->js_call_amd('mod_cursosprogresso/cursosprogressomain', 'init');
 
     $renderer = $PAGE->get_renderer('mod_cursosprogresso');
+
+    $emblema_issued = [];
+    
+    $cursoid = $cm->get_course()->id;
+
+    $emblemas = badges_get_badges(BADGE_TYPE_COURSE, $cursoid);
+
+    if (count($emblemas) > 0) {
+        foreach ($emblemas as $emblema) {
+            if ($emblema->is_issued($USER->id)) {
+                $emblema_issued[] = $emblema->id;
+            }
+        }
+
+        if (count($emblema_issued) > 0) {
+            $PAGE->requires->js_call_amd('mod_cursosprogresso/emblema', 'init', [
+                'emblemaUrl' => new moodle_url('/badges/view.php', array('type' => 2, 'id' => $cursoid))
+            ]);
+        }
+    }
 
     $listacursos = new \mod_cursosprogresso\output\lista_cursos($cm);
     $selectedcourses_html = $renderer->render($listacursos);
