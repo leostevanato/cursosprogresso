@@ -115,13 +115,35 @@ class lista_cursos implements templatable, renderable {
         return $conta_completos_pct;
     }
 
+    // Verifica se o usuário tem um certificado emitido pelo simplecertificate em determinado curso.
+    // Pode ser usado como uma camada extra para verificação de conclusão de um curso.
+    public function get_usuario_simplecertificate($usuarioid, $cursoid) {
+        global $DB;
+
+        $certificado_curso = $DB->get_record('simplecertificate', ['course' => $cursoid], 'id');
+        
+        if ($certificado_curso) {
+            if ($DB->get_record('simplecertificate_issues', ['certificateid' => $certificado_curso->id, 'userid' => $usuarioid, 'timedeleted' => null])) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
     public function get_usuario_curso_status($usuarioid, $cursoid) {
         $coursecontext = \context_course::instance($cursoid);
 
         if (is_enrolled($coursecontext, $usuarioid)) {
             $completion = new completion_completion(['course' => $cursoid, 'userid' => $usuarioid]);
 
-            return $completion->is_complete() ? 'completo' : 'incompleto';
+            if ($completion->is_complete()) {
+                return 'completo';
+            }
+            
+            return $this->get_usuario_simplecertificate($usuarioid, $cursoid) ? 'completo' : 'incompleto';
         }
 
         return "nao_inscrito";
