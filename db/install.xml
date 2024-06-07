@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/cursosprogresso/db" VERSION="20240327" COMMENT="XMLDB file for Moodle mod_cursosprogresso"
+<XMLDB PATH="mod/cursosprogresso/db" VERSION="2024052902" COMMENT="XMLDB file for Moodle mod_cursosprogresso"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -20,6 +20,7 @@
         <FIELD NAME="htmlclasscoursestatus" TYPE="char" LENGTH="60" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="showprogressbar" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="dividprogressbar" TYPE="char" LENGTH="60" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="completioncoursescomplete" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Condição de conclusão de atividade cursos selecionados completados."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

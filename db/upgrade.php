@@ -36,10 +36,20 @@ function xmldb_cursosprogresso_upgrade($oldversion)
 
     $dbman = $DB->get_manager();
 
-    // For further information please read {@link https://docs.moodle.org/dev/Upgrade_API}.
-    //
-    // You will also have to create the db/install.xml file by using the XMLDB Editor.
-    // Documentation for the XMLDB Editor can be found at {@link https://docs.moodle.org/dev/XMLDB_editor}.
+    if ($oldversion < 2024052902) {
+
+        // Define field completioncoursescomplete to be added to cursosprogresso.
+        $table = new xmldb_table('cursosprogresso');
+        $field = new xmldb_field('completioncoursescomplete', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'dividprogressbar');
+
+        // Conditionally launch add field completioncoursescomplete.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Cursosprogresso savepoint reached.
+        upgrade_mod_savepoint(true, 2024052902, 'cursosprogresso');
+    }
 
     return true;
 }
