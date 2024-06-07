@@ -25,7 +25,6 @@
 namespace core_course;
 namespace mod_cursosprogresso\output;
 
-use core_completion\progress;
 use completion_completion;
 use templatable;
 use renderer_base;
@@ -34,8 +33,15 @@ use renderable;
 class lista_cursos implements templatable, renderable {
     /** @var The course module. */
     protected $cm;
+
     /** @var array Cursos selecionados. */
-    protected $cursos_selecionados = [];
+    protected $cursosselecionados = [];
+
+    /** @var array Configurações do plugin. */
+    protected $configuracoes = [];
+
+    /** @var array Dados para javascript. */
+    protected $dadosjs = [];
 
     /**
      * Constructor for this class.
@@ -43,24 +49,11 @@ class lista_cursos implements templatable, renderable {
      * @param $cm The course module.
      */
     public function __construct($cm) {
+        global $DB, $USER;
+        
         $this->cm = $cm;
-    }
-    
-    /**
-     * Exports the navigation buttons around the book.
-     *
-     * @param renderer_base $output renderer base output.
-     * @return array Data to render.
-     */
-    public function export_for_template(renderer_base $output): array {
-        global $DB;
-        global $USER;
-        global $PAGE;
 
-        $data = [];
-        $datajs = [];
-
-        if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['id' => $this->cm->instance], 'id, name,selectedcourses,showcourseslist,htmlidcourseslist,htmlclasscourseitem')) {
+        if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['id' => $this->cm->instance], 'id,name,selectedcourses,showcourseslist,htmlidcourseslist,htmlclasscourseitem')) {
             return false;
         }
 
@@ -69,60 +62,87 @@ class lista_cursos implements templatable, renderable {
         foreach ($selectedcourses as $courseid) {
             $status = $this->get_usuario_curso_status($USER->id, $courseid);
 
-            $data['cursos'][] = [
+            $this->cursosselecionados['cursos'][] = [
                 'courseid' => $courseid,
                 'fullname' => get_course($courseid)->fullname,
                 'completed' => $status == "completo" ? true : false,
                 'status' => $status
             ];
 
-            $datajs[] = [
+            $this->dadosjs[] = [
                 'id' => $courseid,
                 's' => substr($status, 0, 1) // c, i ou n (completo, incompleto, não inscrito)
             ];
         }
 
-        $this->cursos_selecionados = $data;
+        $this->configuracoes = [
+            'showdefault' => $cursosprogresso->showcourseslist,
+            'courseListHtmlId' => $cursosprogresso->htmlidcourseslist,
+            'courseListHtmlClass' => $cursosprogresso->htmlclasscourseitem
+        ];
+    }
 
-        $data["courseListHtmlId"] = $cursosprogresso->htmlidcourseslist;
-        $data["courseListHtmlClass"] = $cursosprogresso->htmlclasscourseitem;
-        $data["showdefault"] = $cursosprogresso->showcourseslist;
+    /**
+     * Exporta os dados para o template.
+     *
+     * @param renderer_base $output renderer base output.
+     * @return array Data to render.
+     */
+    public function export_for_template(renderer_base $output): array {
+        global $PAGE;
 
-        if (!$cursosprogresso->showcourseslist) {
-            $PAGE->requires->js_call_amd('mod_cursosprogresso/listacursos', 'init', [$datajs]);
+        if (!$this->configuracoes['showdefault']) {
+            $PAGE->requires->js_call_amd('mod_cursosprogresso/listacursos', 'init', [$this->dadosjs]);
         }
 
-        return $data;
+        return array_merge($this->cursosselecionados, $this->configuracoes);
     }
 
+    /**
+     * @return array cursos selecionados
+     */
     public function get_cursos_selecionados() {
-        return $this->cursos_selecionados;
+        return $this->cursosselecionados;
     }
 
+    /**
+     * @return int porcentagem de cursos completos
+     */
     public function get_cursos_completados_porcentagem() {
-        if (empty($this->cursos_selecionados) || count($this->cursos_selecionados['cursos']) == 0) {
+        if (empty($this->cursosselecionados) || count($this->cursosselecionados['cursos']) == 0) {
             return 0;
         }
 
-        $conta_completos = array_reduce($this->cursos_selecionados['cursos'], function($carry, $item) { return $carry + ($item['completed'] ? 1 : 0); }, 0);
+        $conta_completos = array_reduce($this->cursosselecionados['cursos'], function($carry, $item) { return $carry + ($item['completed'] ? 1 : 0); }, 0);
 
         $conta_completos_pct = 0;
 
         if ($conta_completos > 0) {
-            $conta_completos_pct = ($conta_completos / count($this->cursos_selecionados['cursos'])) * 100;
+            $conta_completos_pct = ($conta_completos / count($this->cursosselecionados['cursos'])) * 100;
         }
 
         return $conta_completos_pct;
     }
 
-    // Verifica se o usuário tem um certificado emitido pelo simplecertificate em determinado curso.
-    // Pode ser usado como uma camada extra para verificação de conclusão de um curso.
+    /**
+     * Verifica se o usuário tem um certificado emitido pelo simplecertificate em determinado curso.
+     * Pode ser usado como uma camada extra para verificação de conclusão de um curso.
+     * 
+     * @param mixed $usuarioid
+     * @param mixed $cursoid
+     * 
+     * @return boolean
+     */
     public function get_usuario_simplecertificate($usuarioid, $cursoid) {
         global $DB;
 
-        $certificado_curso = $DB->get_record('simplecertificate', ['course' => $cursoid], 'id');
+        $dbman = $DB->get_manager();
+
+        if (!$dbman->table_exists('simplecertificate')) {
+            return false;
+        }
         
-        if ($certificado_curso) {
+        if ($certificado_curso = $DB->get_record('simplecertificate', ['course' => $cursoid], 'id')) {
             if ($DB->get_record('simplecertificate_issues', ['certificateid' => $certificado_curso->id, 'userid' => $usuarioid, 'timedeleted' => null])) {
                 return true;
             } else {
@@ -133,6 +153,14 @@ class lista_cursos implements templatable, renderable {
         return false;
     }
 
+    /**
+     * Pega o status do usuário em determinado curso.
+     * 
+     * @param mixed $usuarioid
+     * @param mixed $cursoid
+     * 
+     * @return string 'completo', 'incompleto' ou 'nao_inscrito'
+     */
     public function get_usuario_curso_status($usuarioid, $cursoid) {
         $coursecontext = \context_course::instance($cursoid);
 
@@ -146,6 +174,6 @@ class lista_cursos implements templatable, renderable {
             return $this->get_usuario_simplecertificate($usuarioid, $cursoid) ? 'completo' : 'incompleto';
         }
 
-        return "nao_inscrito";
+        return 'nao_inscrito';
     }
 }
