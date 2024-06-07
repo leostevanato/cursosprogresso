@@ -48,3 +48,7 @@ $string['showprogressbar_help'] = 'Sim - exibe a barra de progresso do plugin na
 
 Não - Exibe a barra de progresso no elemento com o ID informado. Nesse caso, o elemento deve ser adicionado de forma manual.';
 $string['dividprogressbar'] = 'ID da div da barra de progresso';
+
+$string['completioncoursescomplete'] = 'Completar os cursos selecionados';
+$string['completioncoursescompletegroup'] = 'Requer que os cursos selecionados sejam completados';
+$string['completioncoursescompletedesc'] = 'O aluno deve completar todos os cursos selecionados.';

@@ -165,4 +165,48 @@ class mod_cursosprogresso_mod_form extends moodleform_mod {
             $this->config->selectedcourses = implode(',', $selectedcourses);
         }
     }
+
+    /**
+     * Allows module to modify the data returned by form get_data().
+     * É aqui que completioncoursescomplete no banco é setado 0 caso a condição de conclusão seja alterada.
+     *
+     * Only available on moodleform_mod.
+     *
+     * @param stdClass $data the form data to be modified.
+     */
+    public function data_postprocessing($data) {
+        parent::data_postprocessing($data);
+
+        // Set up completion section even if checkbox is not ticked.
+        if (!empty($data->completionunlocked)) {
+            if (empty($data->completioncoursescomplete)) {
+                $data->completioncoursescomplete = 0;
+            }
+        }
+    }
+
+    /**
+     * Add elements for setting the custom completion rules.
+     *
+     * @category completion
+     * @return array List of added element names, or names of wrapping group elements.
+     */
+    public function add_completion_rules() {
+
+        $mform =& $this->_form;
+
+        $mform->addElement('checkbox', 'completioncoursescomplete', '', get_string('completioncoursescomplete', 'mod_cursosprogresso'));
+
+        return array('completioncoursescomplete');
+    }
+
+    /**
+     * Called during validation to see whether some activity-specific completion rules are selected.
+     *
+     * @param array $data Input data not yet validated.
+     * @return bool True if one or more rules is enabled, false if none are.
+     */
+    public function completion_rule_enabled($data) {
+        return !empty($data['completioncoursescomplete']);
+    }
 }

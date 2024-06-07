@@ -30,11 +30,11 @@
  */
 function cursosprogresso_supports($feature) {
     switch ($feature) {
-        case FEATURE_MOD_ARCHETYPE: return MOD_ARCHETYPE_RESOURCE;
-        case FEATURE_MOD_INTRO:     return true;
-        case FEATURE_MOD_PURPOSE:   return MOD_PURPOSE_CONTENT;
-        case FEATURE_NO_VIEW_LINK:  return true;
-        default: return null;
+        case FEATURE_MOD_ARCHETYPE:         return MOD_ARCHETYPE_RESOURCE;
+        case FEATURE_MOD_INTRO:             return true;
+        case FEATURE_NO_VIEW_LINK:          return true;
+        case FEATURE_COMPLETION_HAS_RULES:  return true;
+        default:                            return null;
     }
 }
 
@@ -120,11 +120,9 @@ function cursosprogresso_delete_instance($id) {
  * @param cm_info $cm Course-module object
  */
 function cursosprogresso_cm_info_view(cm_info $cm) {
-    global $DB;
-    global $PAGE;
-    global $USER;
+    global $DB, $PAGE, $USER;
 
-    if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['id' => $cm->instance], 'id,name,selectedcourses,showprogressbar,dividprogressbar')) {
+    if (!$cursosprogresso = $DB->get_record('cursosprogresso', ['id' => $cm->instance], 'id,name,selectedcourses,showprogressbar,dividprogressbar,completioncoursescomplete')) {
         return false;
     }
     
@@ -156,6 +154,15 @@ function cursosprogresso_cm_info_view(cm_info $cm) {
     $selectedcourses_html = $renderer->render($listacursos);
 
     $cursos_completados_pct = $listacursos->get_cursos_completados_porcentagem();
+
+    $completion = new completion_info($cm->get_course());
+
+    if ($completion->is_enabled($cm) && $cursosprogresso->completioncoursescomplete == 1) {
+        // O método update_state verifica se o usuário atual cumpriu as regras de conclusão da
+        // atividade definidas na função cursosprogresso_get_completion_state. Se sim, ela atualiza 
+        // o estado da atividade como completa.
+        $completion->update_state($cm, COMPLETION_COMPLETE);
+    }
 
     $barraprogresso_html = "";
     
@@ -189,15 +196,24 @@ function cursosprogresso_cm_info_view(cm_info $cm) {
 function cursosprogresso_get_coursemodule_info($cm) {
     global $DB;
 
-    if ($cursosprogresso = $DB->get_record('cursosprogresso', array('id' => $cm->instance), 'id, name, intro, introformat')) {
+    if ($cursosprogresso = $DB->get_record('cursosprogresso', ['id' => $cm->instance], 'id, name, intro, introformat, completioncoursescomplete')) {
         $info = new cached_cm_info();
-        // no filtering hre because this info is cached and filtered later
-        $info->content = format_module_intro('cursosprogresso', $cursosprogresso, $cm->id, false);
         $info->name  = $cursosprogresso->name;
+
+        if ($cm->showdescription) {
+            // Convert intro to html. Do not filter cached version, filters run at display time.
+            // No filtering here because this info is cached and filtered later.
+            $info->content = format_module_intro('cursosprogresso', $cursosprogresso, $cm->id, false);
+        }
+
+        // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
+        if ($cm->completion == COMPLETION_TRACKING_AUTOMATIC) {
+            $info->customdata['customcompletionrules']['completioncoursescomplete'] = $cursosprogresso->completioncoursescomplete;
+        }
 
         return $info;
     } else {
-        return null;
+        return false;
     }
 }
 
@@ -218,4 +234,58 @@ function cursosprogresso_reset_userdata($data) {
     // See MDL-9367.
 
     return array();
+}
+
+/**
+ * Obtains the automatic completion state for this activity based on any conditions
+ * in activity settings.
+ *
+ * @param object $course Course
+ * @param object $cm Course-module
+ * @param int $userid User ID
+ * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
+ * @return bool True if completed, false if not, $type if conditions not set.
+ */
+function cursosprogresso_get_completion_state($course, $cm, $userid, $type) {
+    global $DB;
+
+    // Get cursosprogresso details
+    $cursosprogresso = $DB->get_record('cursosprogresso', ['id' => $cm->instance], '*', MUST_EXIST);
+
+    $listacursos = new \mod_cursosprogresso\output\lista_cursos($cm);
+
+    // If completion option is enabled, evaluate it and return true/false
+    if ($cursosprogresso->completioncoursescomplete == 1) {
+        return $listacursos->get_cursos_completados_porcentagem() >= 99;
+    } else {
+        // Completion option is not enabled so just return $type
+        return $type;
+    }
+}
+
+/**
+ * Callback which returns human-readable strings describing the active completion custom rules for the module instance.
+ *
+ * @param cm_info|stdClass $cm object with fields ->completion and ->customdata['customcompletionrules']
+ * @return array $descriptions the array of descriptions for the custom rules.
+ */
+function mod_cursosprogresso_get_completion_active_rule_descriptions($cm) {
+    // Values will be present in cm_info, and we assume these are up to date.
+    if (empty($cm->customdata['customcompletionrules']) || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
+        return [];
+    }
+
+    $descriptions = [];
+    foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
+        switch ($key) {
+            case 'completioncoursescomplete':
+                if (!empty($val)) {
+                    $descriptions[] = get_string('completioncoursescompletedesc', 'mod_cursosprogresso', $val);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    return $descriptions;
 }
