@@ -43,7 +43,9 @@ class secondary extends core_secondary {
         $rootnode = $rootnode ?? $this;
         $node = $rootnode->find('modulepage', null);
         if ($node) {
-            // Cursosprogresso não tem uma view e redireciona pra página do curso. Aterar o nome para refletir isso. Essa mudança é no menu na página de edição do plugin. O primeiro item do menu por padrão é o link para a view do plugin. Mudamos para redirecionar para o curso.
+            // Cursosprogresso não tem uma view e redireciona pra página do curso. Aterar o nome para refletir isso.
+            // Essa mudança é no menu na página de edição do plugin. O primeiro item do menu por padrão é o link para
+            // a view do plugin. Mudamos para redirecionar para o curso.
             $node->text = get_string('course');
         }
     }
