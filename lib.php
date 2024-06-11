@@ -289,3 +289,15 @@ function mod_cursosprogresso_get_completion_active_rule_descriptions($cm) {
     }
     return $descriptions;
 }
+
+function curso_simplecertificate_ativo($cursoid) {
+    global $DB;
+
+    $dbman = $DB->get_manager();
+
+    if (!$dbman->table_exists('simplecertificate')) {
+        return false;
+    }
+    
+    return $DB->get_record('simplecertificate', ['course' => $cursoid], 'id');
+}

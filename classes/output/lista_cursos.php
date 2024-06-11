@@ -134,15 +134,9 @@ class lista_cursos implements templatable, renderable {
      * @return boolean
      */
     public function get_usuario_simplecertificate($usuarioid, $cursoid) {
-        global $DB;
+        if ($certificado_curso = curso_simplecertificate_ativo($cursoid)) {
+            global $DB;
 
-        $dbman = $DB->get_manager();
-
-        if (!$dbman->table_exists('simplecertificate')) {
-            return false;
-        }
-        
-        if ($certificado_curso = $DB->get_record('simplecertificate', ['course' => $cursoid], 'id')) {
             if ($DB->get_record('simplecertificate_issues', ['certificateid' => $certificado_curso->id, 'userid' => $usuarioid, 'timedeleted' => null])) {
                 return true;
             } else {
