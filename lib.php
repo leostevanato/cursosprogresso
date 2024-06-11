@@ -144,8 +144,10 @@ function cursosprogresso_cm_info_view(cm_info $cm) {
         }
 
         if (count($emblema_issued) > 0) {
+            $emblemaurl = new moodle_url('/badges/view.php', array('type' => 2, 'id' => $cursoid));
+
             $PAGE->requires->js_call_amd('mod_cursosprogresso/emblema', 'init', [
-                'emblemaUrl' => new moodle_url('/badges/view.php', array('type' => 2, 'id' => $cursoid))
+                'emblemaUrl' => $emblemaurl->out()
             ]);
         }
     }
