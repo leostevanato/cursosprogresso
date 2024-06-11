@@ -165,6 +165,19 @@ function cursosprogresso_cm_info_view(cm_info $cm) {
         // o estado da atividade como completa.
         $completion->update_state($cm, COMPLETION_COMPLETE);
     }
+    
+    if (curso_simplecertificate_ativo($cursoid)) {
+        // Pega as informações do simplecertificate do $cm
+        $modinfosimplecertificate = get_fast_modinfo($cursoid, $USER->id)->instances['simplecertificate'][$cm->instance];
+
+        if ($modinfosimplecertificate->available) {
+            $simplecertificateurl = new moodle_url('/mod/simplecertificate/view.php', ['id' => $modinfosimplecertificate->id]);
+
+            $PAGE->requires->js_call_amd('mod_cursosprogresso/certificado', 'init', [
+                'certificadoUrl' => $simplecertificateurl->out()
+            ]);
+        }
+    }
 
     $barraprogresso_html = "";
     
