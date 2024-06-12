@@ -168,8 +168,9 @@ function cursosprogresso_cm_info_view(cm_info $cm) {
     
     if (curso_simplecertificate_ativo($cursoid)) {
         // Pega as informações do simplecertificate do $cm
-        $modinfosimplecertificate = get_fast_modinfo($cursoid, $USER->id)->instances['simplecertificate'][$cm->instance];
-
+        $simplecertificateid = $DB->get_field('simplecertificate', 'id', ['course' => $cursoid]);
+        $modinfosimplecertificate = get_fast_modinfo($cursoid, $USER->id)->instances['simplecertificate'][$simplecertificateid];
+        
         if ($modinfosimplecertificate->available) {
             $simplecertificateurl = new moodle_url('/mod/simplecertificate/view.php', ['id' => $modinfosimplecertificate->id]);
 
