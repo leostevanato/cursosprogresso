@@ -14,6 +14,12 @@ o grunt direcionado para a pasta onde os arquivos js estão, caso contrário o g
 compilar todos os javascript do Moodle e levará muito tempo.
 https://moodledev.io/general/development/tools/nodejs
 
+## Próximos passos ##
+
+- Implementar backup
+- Tornar informações que atualmente estão "hard coded" em dinâmicas (Ex: textos do botão do certificado)
+- Testar no Moodle 4
+
 ## Installing via uploaded ZIP file ##
 
 1. Log in to your Moodle site as an admin and go to _Site administration >
