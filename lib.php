@@ -147,7 +147,7 @@ function cursosprogresso_cm_info_view(cm_info $cm) {
             $emblemaurl = new moodle_url('/badges/view.php', array('type' => 2, 'id' => $cursoid));
 
             $PAGE->requires->js_call_amd('mod_cursosprogresso/emblema', 'init', [
-                'emblemaUrl' => $emblemaurl->out()
+                'emblemaUrl' => $emblemaurl->out(false)
             ]);
         }
     }
@@ -174,7 +174,7 @@ function cursosprogresso_cm_info_view(cm_info $cm) {
             $simplecertificateurl = new moodle_url('/mod/simplecertificate/view.php', ['id' => $modinfosimplecertificate->id]);
 
             $PAGE->requires->js_call_amd('mod_cursosprogresso/certificado', 'init', [
-                'certificadoUrl' => $simplecertificateurl->out()
+                'certificadoUrl' => $simplecertificateurl->out(false)
             ]);
         }
     }
